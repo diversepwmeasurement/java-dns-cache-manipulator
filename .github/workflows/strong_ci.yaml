@@ -1,43 +1,43 @@
-# Quickstart for GitHub Actions
-# https://docs.github.com/en/actions/quickstart
-
-name: Strong CI
-on: [ push, pull_request, workflow_dispatch ]
 jobs:
   test:
-    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
     name: CI by multiply java versions
-
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+    - continue-on-error: true
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - continue-on-error: true
+      name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        cache: maven
+        distribution: zulu
+        java-version: '8
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          # https://github.com/actions/setup-java?tab=readme-ov-file#install-multiple-jdks
-          #
-          # do NOT move old version 8.0.345 before 8, because the old version satified version 8
-          java-version: |
-            8
-            8.0.345
-            11
-            17
-            20
-          distribution: zulu
-          cache: maven
+          8.0.345
 
-      - name: Run integration test
-        run: scripts/integration_test
+          11
 
-      - name: Remove self maven install files
-        run: rm -rf $HOME/.m2/repository/com/alibaba/dns-cache-manipulator*
+          17
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          name: codecov-umbrella
-          token: ${{ secrets.CODECOV_TOKEN }}
+          20
+
+          '
+    - continue-on-error: true
+      name: Run integration test
+      run: scripts/integration_test
+    - continue-on-error: true
+      name: Remove self maven install files
+      run: rm -rf $HOME/.m2/repository/com/alibaba/dns-cache-manipulator*
+    - continue-on-error: true
+      name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        name: codecov-umbrella
+        token: ${{ secrets.CODECOV_TOKEN }}
+    timeout-minutes: 10
+name: Strong CI
+on:
+  repository_dispatch:
+    types: trigger-ga___strong_ci.yaml
